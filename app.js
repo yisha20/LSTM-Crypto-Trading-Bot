@@ -1,6 +1,7 @@
 import { BzChart } from 'https://cdn.jsdelivr.net/gh/bonezegei/bzUI/dist/bzChart.min.js';
 import { TinyLSTM } from './tiny-lstm.js';
 import { createUnrollGraph } from './unroll-graph.js';
+import { evaluateTradingBot } from './trading-bot.js';
 
 const SYMBOL = 'BTCUSDT';
 const HORIZON = 20;         // candles to forecast
@@ -315,6 +316,13 @@ async function tick() {
     };
     if (!model) resetModel();
     forecast = trainAndForecast(closes, candles[candles.length - 1].time);
+    
+    evaluateTradingBot(
+    closes[closes.length - 1],
+    forecast[forecast.length - 1],
+    candles[candles.length - 1].time,
+    INTERVAL
+);
     predictions.set(candles[candles.length - 1].time + INTERVAL_MS[INTERVAL], forecast[0]);
     render();
     updateText();
